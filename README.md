@@ -83,9 +83,14 @@ gamescraft/
 │   ├── research_agent.py
 │   ├── script_writer_agent.py
 │   └── youtube_coach_agent.py
-├── tools/               # Tool definitions for agents
+├── tools/               # Modular tool collection
+│   ├── youtube_tools.py      # YouTube transcript & search
+│   ├── web_scraping.py       # General web content extraction
+│   ├── game_research.py      # Wikipedia & game data tools
+│   └── README.md            # Tool documentation
 ├── workflows/           # LangGraph workflow orchestration
-├── config/              # Configuration management
+├── llm_client/          # LLM provider abstraction
+├── test/                # Unified test suite
 ├── main.py              # Main application entry point
 └── pyproject.toml       # Project configuration and dependencies
 ```
@@ -104,13 +109,13 @@ Test all tools with the unified test suite:
 
 ```bash
 # Quick automated testing
-uv run python test/test_tools_unified.py --auto
+uv run python test/test_tools.py --auto
 
 # Interactive testing with menu options
-uv run python test/test_tools_unified.py
+uv run python test/test_tools.py
 
 # Show help
-uv run python test/test_tools_unified.py --help
+uv run python test/test_tools.py --help
 ```
 
 Once tools are verified, test the full multi-agent system:

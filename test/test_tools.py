@@ -377,9 +377,9 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] in ["--help", "-h"]:
         print("GamesCraft AI Tools Test Suite")
         print("Usage:")
-        print("  python test_tools_unified.py              # Interactive mode (if TTY)")
-        print("  python test_tools_unified.py --auto       # Auto mode (quick tests)")
-        print("  python test_tools_unified.py --help       # Show this help")
+        print("  python test_tools.py              # Interactive mode (if TTY)")
+        print("  python test_tools.py --auto       # Auto mode (quick tests)")
+        print("  python test_tools.py --help       # Show this help")
         print("\nModes:")
         print("  Interactive: Menu-driven testing with multiple options")
         print("  Auto:        Quick automated testing (1 test per tool)")
