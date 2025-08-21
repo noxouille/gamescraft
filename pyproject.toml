@@ -1,5 +1,5 @@
 [project]
-name = "YOUR-PROJECT-NAME"  # TODO: Update this to your project name
+name = "gamescraft"
 version = "0.1.0"
 description = ""
 readme = "README.md"
