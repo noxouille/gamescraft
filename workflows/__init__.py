@@ -1,7 +1,7 @@
 from typing import Dict, Any, Literal
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage
-from agents import AgentState, ResearchAgent, ScriptWriterAgent, YouTubeCoachAgent
+from agents import AgentState, QueryAnalyzerAgent, ResearchAgent, ScriptWriterAgent, YouTubeCoachAgent
 from llm_client.config import get_config
 
 
@@ -9,6 +9,7 @@ class GamesCraftWorkflow:
     def __init__(self):
         self.config = get_config()
         
+        self.query_analyzer = QueryAnalyzerAgent()
         self.research_agent = ResearchAgent()
         self.script_writer = ScriptWriterAgent()
         self.youtube_coach = YouTubeCoachAgent()
@@ -18,43 +19,39 @@ class GamesCraftWorkflow:
     def _build_workflow(self) -> StateGraph:
         workflow = StateGraph(AgentState)
         
-        workflow.add_node("intent_detection", self._detect_intent)
+        workflow.add_node("query_analysis", self._query_analysis_node)
         workflow.add_node("research", self._research_node)
         workflow.add_node("script_writing", self._script_writing_node)
         workflow.add_node("thumbnail_generation", self._thumbnail_node)
         
-        workflow.set_entry_point("intent_detection")
+        workflow.set_entry_point("query_analysis")
         
-        workflow.add_edge("intent_detection", "research")
+        # Conditional edge: only proceed if query is relevant
+        workflow.add_conditional_edges(
+            "query_analysis",
+            self._should_continue,
+            {
+                "continue": "research",
+                "end": END
+            }
+        )
+        
         workflow.add_edge("research", "script_writing")
         workflow.add_edge("script_writing", "thumbnail_generation")
         workflow.add_edge("thumbnail_generation", END)
         
         return workflow.compile()
     
-    async def _detect_intent(self, state: AgentState) -> AgentState:
-        query_lower = state.query.lower()
-        
-        state.language = self._detect_language(query_lower)
-        
-        if any(keyword in query_lower for keyword in ["summary", "résumé", "showcase", "direct", "event"]):
-            state.intent = "event_summary"
-        elif any(keyword in query_lower for keyword in ["review", "critique", "video", "vidéo", "about", "sur"]):
-            state.intent = "game_content"
-        else:
-            state.intent = "general"
-        
-        state.messages.append(
-            HumanMessage(content=f"Query: {state.query} | Intent: {state.intent} | Language: {state.language}")
-        )
-        state.current_agent = "Research"
-        
-        return state
+    async def _query_analysis_node(self, state: AgentState) -> AgentState:
+        """Run the query analyzer agent to validate and extract information."""
+        return await self.query_analyzer.process(state)
     
-    def _detect_language(self, text: str) -> str:
-        french_keywords = ["fais", "crée", "vidéo", "critique", "résumé", "sur", "de", "minutes"]
-        french_count = sum(1 for keyword in french_keywords if keyword in text)
-        return "fr" if french_count >= 2 else "en"
+    def _should_continue(self, state: AgentState) -> str:
+        """Determine whether to continue processing based on query relevance."""
+        if state.is_relevant:
+            return "continue"
+        else:
+            return "end"
     
     async def _research_node(self, state: AgentState) -> AgentState:
         return await self.research_agent.process(state)
@@ -69,17 +66,31 @@ class GamesCraftWorkflow:
         initial_state = AgentState(
             query=query,
             messages=[],
-            current_agent="intent_detection"
+            current_agent="query_analysis"
         )
         
         try:
             final_state = await self.workflow.ainvoke(initial_state)
             
+            # Check if query was rejected as irrelevant
+            if not final_state.is_relevant:
+                return {
+                    "success": False,
+                    "query": query,
+                    "is_relevant": False,
+                    "error": final_state.error or "Query not relevant for YouTube gaming content creation",
+                    "messages": [msg.content for msg in final_state.messages]
+                }
+            
             return {
                 "success": True,
                 "query": query,
+                "is_relevant": True,
                 "language": final_state.language,
                 "intent": final_state.intent,
+                "event_name": final_state.event_name,
+                "game_names": final_state.game_names,
+                "query_context": final_state.query_context,
                 "research": final_state.research_data,
                 "script": final_state.script,
                 "thumbnails": final_state.thumbnails,

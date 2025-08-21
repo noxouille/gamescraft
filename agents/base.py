@@ -22,6 +22,12 @@ class AgentState(BaseModel):
     language: str = "en"
     intent: str = ""
     
+    # Query analysis results
+    is_relevant: bool = False
+    event_name: Optional[str] = None
+    game_names: List[str] = Field(default_factory=list)
+    query_context: Dict[str, Any] = Field(default_factory=dict)
+    
     # Agent outputs
     research_data: Dict[str, Any] = Field(default_factory=dict)
     script: str = ""
