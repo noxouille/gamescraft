@@ -1,6 +1,6 @@
 from typing import List
 from langchain_core.messages import AIMessage
-from agents import BaseAgent, AgentState
+from .base import BaseAgent, AgentState
 
 
 class YouTubeCoachAgent(BaseAgent):

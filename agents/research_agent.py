@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 from langchain_core.messages import HumanMessage, AIMessage
-from agents import BaseAgent, AgentState
+from .base import BaseAgent, AgentState
 from tools import get_youtube_transcript, scrape_web_content, search_youtube_videos, search_game_info
 
 

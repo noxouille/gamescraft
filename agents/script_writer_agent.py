@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from langchain_core.messages import AIMessage
-from agents import BaseAgent, AgentState
+from .base import BaseAgent, AgentState
 
 
 class ScriptWriterAgent(BaseAgent):
