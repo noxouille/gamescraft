@@ -18,6 +18,7 @@ class LLMConfig:
     together_model: str = "meta-llama/Llama-3-8b-chat-hf"
     max_retries: int = 3
     timeout: int = 30
+    environment: str = "development"
 
 
 def get_config(env: Optional[str] = None) -> LLMConfig:
@@ -35,6 +36,7 @@ def get_config(env: Optional[str] = None) -> LLMConfig:
         env = os.getenv("ENVIRONMENT", Environment.DEVELOPMENT.value)
     
     config = LLMConfig()
+    config.environment = env
     
     # Load API keys and models based on environment
     if env == Environment.PRODUCTION.value:
