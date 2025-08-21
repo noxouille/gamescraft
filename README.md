@@ -98,6 +98,26 @@ gamescraft/
 4. **Thumbnail Generation**: The YouTube Coach Agent generates 3 viral thumbnail concepts
 5. **Output**: All results are displayed and can be saved to JSON files
 
+## Testing
+
+Test all tools with the unified test suite:
+
+```bash
+# Quick automated testing
+uv run python test/test_tools_unified.py --auto
+
+# Interactive testing with menu options
+uv run python test/test_tools_unified.py
+
+# Show help
+uv run python test/test_tools_unified.py --help
+```
+
+Once tools are verified, test the full multi-agent system:
+```bash
+uv run python main.py
+```
+
 ## Requirements
 
 - Python 3.11+
