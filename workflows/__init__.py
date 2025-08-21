@@ -1,10 +1,7 @@
 from typing import Dict, Any, Literal
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage
-from agents import AgentState
-from agents.research_agent import ResearchAgent
-from agents.script_writer_agent import ScriptWriterAgent
-from agents.youtube_coach_agent import YouTubeCoachAgent
+from agents import AgentState, ResearchAgent, ScriptWriterAgent, YouTubeCoachAgent
 from llm_client.config import get_config
 
 
