@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+logs
+.ruff_cache/
+
+# uv
+.venv/
+*.egg-info/
+dist/
+build/
+.python-version
