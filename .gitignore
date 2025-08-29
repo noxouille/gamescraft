@@ -10,3 +10,16 @@ logs
 dist/
 build/
 .python-version
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Jupyter metadata
+.jupyter/
+jupyter_notebook_config.py
+
+# IPython
+profile_default/
+ipython_config.py
